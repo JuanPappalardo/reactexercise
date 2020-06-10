@@ -13,7 +13,7 @@ class App extends Component {
   }
   render() {
     return (
-      <div className="App">
+      <div className="App text-left">
         <Navbar dark color="primary">
           <div className="container">
             <NavbarBrand href="/">Ristorante Con Fusion</NavbarBrand>
