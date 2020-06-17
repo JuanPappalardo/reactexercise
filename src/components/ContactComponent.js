@@ -28,12 +28,6 @@ class Contact extends Component {
     alert("Current State is:" + JSON.stringify(values));
   }
 
-  handleBlur = (field) => (evt) => {
-    this.setState({
-      touched: { ...this.state.touched, [field]: true },
-    });
-  };
-
   render() {
     return (
       <div className="container">
