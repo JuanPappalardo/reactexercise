@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Card,
   CardImg,
@@ -7,9 +7,124 @@ import {
   CardTitle,
   Breadcrumb,
   BreadcrumbItem,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Col,
+  Row,
+  Label,
 } from "reactstrap";
 import { Link } from "react-router-dom";
-import CommentForm from "./CommentFormComponent";
+import { LocalForm, Errors, Control, Field } from "react-redux-form";
+
+const required = (val) => val && val.length;
+const maxLength = (len) => (val) => !val || val.length <= len;
+const minLength = (len) => (val) => val && val.length >= len;
+
+class CommentForm extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
+    this.state = {
+      isCommentModalOpen: false,
+    };
+  }
+
+  toggleModal() {
+    this.setState({
+      isCommentModalOpen: !this.state.isCommentModalOpen,
+    });
+  }
+
+  handleSubmit(values) {
+    console.log("Comment is" + JSON.stringify(values));
+    alert("Comment is" + JSON.stringify(values));
+  }
+
+  render() {
+    return (
+      <div>
+        <Button outline onClick={this.toggleModal}>
+          <i class="fa fa-pencil" aria-hidden="true"></i> Submit Comment
+        </Button>
+        <Modal isOpen={this.state.isCommentModalOpen} toggle={this.toggleModal}>
+          <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+          <ModalBody>
+            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+              <Row className="form-group">
+                <Label htmlfor="rating" md={12}>
+                  Rating
+                </Label>
+                <Col md={12}>
+                  <Field model=".rating">
+                    <select className="form-control" name="rating">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </Field>
+                </Col>
+              </Row>
+              <Row className="form-group">
+                <Label htmlfor="name" md={12}>
+                  Your Name
+                </Label>
+                <Col md={12}>
+                  <Control.text
+                    model=".name"
+                    id="name"
+                    placeholder="Name"
+                    className="form-control"
+                    validators={{
+                      required,
+                      minLength: minLength(3),
+                      maxLength: maxLength(15),
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".name"
+                    show="touched"
+                    messages={{
+                      required: "Required",
+                      minLength: "Must be greater than 3 characters",
+                      maxLength: "Must be 15 characters or less",
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row className="form-group">
+                <Label htmlfor="name" md={12}>
+                  Comment
+                </Label>
+                <Col md={12}>
+                  <Control.textarea
+                    model=".comment"
+                    id="comment"
+                    placeholder="Comment"
+                    className="form-control"
+                    rows="6"
+                  />
+                </Col>
+              </Row>
+              <Row className="form-group">
+                <Col md={12}>
+                  <Button type="submit" color="primary">
+                    Submit
+                  </Button>
+                </Col>
+              </Row>
+            </LocalForm>
+          </ModalBody>
+        </Modal>
+      </div>
+    );
+  }
+}
 
 function RenderDish({ dish }) {
   return (
