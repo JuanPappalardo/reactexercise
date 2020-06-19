@@ -40,7 +40,12 @@ class CommentForm extends Component {
 
   handleSubmit(values) {
     console.log("Comment is" + JSON.stringify(values));
-    alert("Comment is" + JSON.stringify(values));
+    this.props.addComment(
+      this.props.dishId,
+      values.rating,
+      values.author,
+      values.comment
+    );
   }
 
   render() {
@@ -75,9 +80,9 @@ class CommentForm extends Component {
                 </Label>
                 <Col md={12}>
                   <Control.text
-                    model=".name"
-                    id="name"
-                    placeholder="Name"
+                    model=".author"
+                    id="author"
+                    placeholder="Author"
                     className="form-control"
                     validators={{
                       required,
@@ -87,7 +92,7 @@ class CommentForm extends Component {
                   />
                   <Errors
                     className="text-danger"
-                    model=".name"
+                    model=".author"
                     show="touched"
                     messages={{
                       required: "Required",
@@ -98,7 +103,7 @@ class CommentForm extends Component {
                 </Col>
               </Row>
               <Row className="form-group">
-                <Label htmlfor="name" md={12}>
+                <Label htmlfor="Comment" md={12}>
                   Comment
                 </Label>
                 <Col md={12}>
@@ -138,10 +143,10 @@ function RenderDish({ dish }) {
   );
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
   const commentsDish = comments.map((comment) => {
     return (
-      <li key="{comment.id}" className="mb-3">
+      <li key={comment.id} className="mb-3">
         {comment.comment}
         <br></br>
         -- {comment.author},{" "}
@@ -157,7 +162,7 @@ function RenderComments({ comments }) {
     <div>
       <h4>Comments</h4>
       <ul className="list-unstyled">{commentsDish}</ul>
-      <CommentForm></CommentForm>
+      <CommentForm dishId={dishId} addComment={addComment} />
     </div>
   );
 }
@@ -183,7 +188,11 @@ const Dishdetail = (props) => {
             <RenderDish dish={props.dish} />
           </div>
           <div className="col-12 col-md-5 m-1">
-            <RenderComments comments={props.comments} />
+            <RenderComments
+              comments={props.comments}
+              addComment={props.addComment}
+              dishId={props.dish.id}
+            />
           </div>
         </div>
       </div>
