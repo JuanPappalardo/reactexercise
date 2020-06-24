@@ -14,6 +14,8 @@ import {
   fetchDishes,
   fetchComments,
   fetchPromos,
+  fetchLeaders,
+  postFeedback,
 } from "../redux/ActionCreators";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 
@@ -29,8 +31,17 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   postComment: (dishId, rating, author, comment) =>
     dispatch(postComment(dishId, rating, author, comment)),
+
   fetchDishes: () => {
     dispatch(fetchDishes());
+  },
+
+  postFeedback: (firstname, lastname, telnum, email, message) => {
+    dispatch(postFeedback(firstname, lastname, telnum, email, message));
+  },
+
+  fetchLeaders: () => {
+    dispatch(fetchLeaders());
   },
   resetFeedbackForm: () => {
     dispatch(actions.reset("feedback"));
@@ -46,6 +57,7 @@ class Main extends Component {
 
   componentDidMount() {
     this.props.fetchDishes();
+    this.props.fetchLeaders();
     this.props.fetchComments();
     this.props.fetchPromos();
   }
@@ -64,7 +76,11 @@ class Main extends Component {
           }
           promoLoading={this.props.promotions.isLoading}
           promoErrMess={this.props.promotions.errMess}
-          leader={this.props.leaders.filter((leader) => leader.featured)[0]}
+          leader={
+            this.props.leaders.leaders.filter((leader) => leader.featured)[0]
+          }
+          leaderLoading={this.props.leaders.isLoading}
+          leaderErrMess={this.props.leaders.errMess}
         />
       );
     };
@@ -110,13 +126,20 @@ class Main extends Component {
                 component={() => (
                   <Contact
                     resetFeedbackForm={this.props.resetFeedbackForm}
+                    postFeedback={this.props.postFeedback}
                   ></Contact>
                 )}
               />
               <Route path="/menu/:dishId" component={DishWithId} />
               <Route
                 path="/aboutus"
-                component={() => <About leaders={this.props.leaders} />}
+                component={() => (
+                  <About
+                    leaders={this.props.leaders.leaders}
+                    leaderLoading={this.props.leaders.isLoading}
+                    leaderErrMess={this.props.leaders.errMess}
+                  />
+                )}
               />
               <Redirect to="/home" />
             </Switch>
